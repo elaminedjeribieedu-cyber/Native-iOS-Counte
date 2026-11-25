@@ -69,6 +69,23 @@ jobs:
             -resultBundlePath build/TestResults.xcresult \
             CODE_SIGNING_ALLOWED=NO
 
+      - name: Extract PNG screenshots
+        if: always()
+        run: |
+          mkdir -p build/Screenshots
+          xcrun xcresulttool export attachments \
+            --path build/TestResults.xcresult \
+            --output-path build/Screenshots
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: CounterApp-Screenshots
+          path: build/Screenshots/*.png
+          if-no-files-found: warn
+          retention-days: 7
+
       - name: Upload simulator app
         if: success()
         uses: actions/upload-artifact@v4
